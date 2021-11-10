@@ -46,11 +46,16 @@ Often you'll want to arrange multiple {ggplot2} charts together with tags and ti
 ```{r echo=FALSE}
 ptchw_chart <- ( ( gg_penguin_scatter | gg_penguin_bar_chart ) + plot_layout(tag_level = 'new') ) / gg_penguins_timeline + plot_layout(guides = 'collect') 
 
-ptchw_chart &
+gg_ptch_chart <- ptchw_chart &
   guides(color = guide_none()) &
   plot_annotation(tag_levels = c('1', 'a'), tag_sep = ".") &
   plot_annotation(title = "Arranging ggplot2 charts") &
   theme_minimal()
+
+ggsave("gg_ptch_chart.png",
+       gg_ptch_chart)
+
+gg_ptch_chart
 ```
 
 There are two different packages you can choose from, {cowplot} and {patchwork}. They are both very popular in the R community and it's almost down to personal choice which one you prefer. I've tried to differentiate them a little bit:
