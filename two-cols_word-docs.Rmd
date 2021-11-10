@@ -1,0 +1,158 @@
+---
+title: "Two columns in Word Documents"
+output: officedown::rdocx_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+library(officer)
+library(tidyverse)
+library(palmerpenguins)
+```
+
+# Intro
+
+There are a collection of packages called [{officeverse}](https://ardata-fr.github.io/officeverse/) for creating and manipulating MS Word and MS Powerpoint documents. To create two column layouts we need to use two of these packages:
+
+- {officedown}: This package provides additional RMarkdown output formats for creating .docx and .pptx files. We change the YAML header to contain `output: officedown::rdocx_document`.
+
+- {officer}: This package allows us to programmatically generate (and modify existing) .docx and .pptx files. We use this package to add column breaks with the `run_columnbreak()` function.
+
+There are two steps to creating multiple columns:
+
+1. Use a pair of HTML comments as follows:
+
+<code>
+&lt;!--BLOCK_MULTICOL_START---&gt;
+  
+&lt;!---BLOCK_MULTICOL_START---&gt;
+</code>
+
+1. Call `run_columnbreak()` as an inline expression at the beginning of the content for the second column.
+
+## What's an inline expression?
+
+An inline R expression allows us to run R code within a Markdown content instead of in a code chunk. It looks like this:
+
+```{yaml}
+There are `r 2+2` lights
+```
+
+## Page break
+
+I've manually inserted a page break here with `run_pagebreak()`
+
+```{r}
+run_pagebreak()
+```
+
+
+# Example two column layout
+
+The two column content begins underneath the HTML comment. Remember that the HTML comment won't display inside the output document.
+
+<!---BLOCK_MULTICOL_START--->
+
+This is the beginning of the first column
+
+```{r echo=FALSE, fig.cap="Penguin scatter plot", fig.cap.style = "Image Caption", fig.width=3, fig.height=3, dpi=300}
+gg_penguin_scatter <- penguins %>% 
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = species)) +
+  geom_point() +
+  theme_minimal(base_size = 8)
+
+ggsave("gg_penguin_scatter.png",
+       gg_penguin_scatter,
+       width = 3,
+       height = 3,
+       unit = "in",
+       dpi = 300)
+knitr::include_graphics("gg_penguin_scatter.png")
+```
+
+`r run_columnbreak()`This sentence begins the second column.
+
+```{r echo=FALSE, fig.cap="Penguin scatter plot", fig.cap.style = "Image Caption", fig.width=3, fig.height=3, dpi=300}
+gg_penguin_bar <- penguins %>% 
+  count(island, species) %>% 
+  ggplot(aes(x = n,
+             y = island,
+             fill = species)) +
+  geom_col() +
+  theme_minimal(base_size = 8)
+
+ggsave("gg_penguin_bar.png",
+       gg_penguin_bar,
+       width = 3,
+       height = 3,
+       unit = "in",
+       dpi = 300)
+knitr::include_graphics("gg_penguin_bar.png")
+```
+
+The multi column will end after this sentence.
+
+<!---BLOCK_MULTICOL_STOP--->
+
+**This text** is just below the HTML comment so Word continues in single column mode. There's another manual page break here.
+
+```{r}
+run_pagebreak()
+```
+
+
+# Customising column appearance
+
+By modifying the closing HTML comment it's possible to customise the appearance of the columns:
+
+<!---BLOCK_MULTICOL_START--->
+
+This is the beginning of the first column
+
+```{r echo=FALSE, fig.cap="Penguin scatter plot", fig.cap.style = "Image Caption", fig.width=3, fig.height=3, dpi=300}
+gg_penguin_scatter <- penguins %>% 
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = species)) +
+  geom_point() +
+  theme_minimal(base_size = 8)
+
+ggsave("gg_penguin_scatter.png",
+       gg_penguin_scatter,
+       width = 3,
+       height = 3,
+       unit = "in",
+       dpi = 300)
+knitr::include_graphics("gg_penguin_scatter.png")
+```
+
+`r run_columnbreak()`This sentence begins the second column.
+
+```{r echo=FALSE, fig.cap="Penguin scatter plot", fig.cap.style = "Image Caption", fig.width=3, fig.height=3, dpi=300}
+gg_penguin_bar <- penguins %>% 
+  count(island, species) %>% 
+  ggplot(aes(x = n,
+             y = island,
+             fill = species)) +
+  geom_col() +
+  theme_minimal(base_size = 8)
+
+ggsave("gg_penguin_bar.png",
+       gg_penguin_bar,
+       width = 3,
+       height = 3,
+       unit = "in",
+       dpi = 300)
+knitr::include_graphics("gg_penguin_bar.png")
+```
+
+The multi column will end after this sentence.
+
+<!---BLOCK_MULTICOL_STOP{widths: [3,3], space: 0.2, sep: true}--->
+

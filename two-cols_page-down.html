@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width">
+<meta property="og:title" content="Pagedown" />
+
+
+
+
+
+
+<meta name="description" content="Pagedown">
+
+<script id="pandoc-meta" type="application/json">
+{"newpage_html_class":"page-break-after","paged-footnotes":true,"links-to-footnotes":true,"output":{"pagedown::html_letter":{"self_contained":false}},"title":"Pagedown"}
+</script>
+
+<title>Pagedown</title>
+
+
+<script src="two-cols_page-down_files/header-attrs-2.11/header-attrs.js"></script>
+<link href="two-cols_page-down_files/paged-0.15/css/default.css" rel="stylesheet" />
+<link href="two-cols_page-down_files/paged-0.15/css/letter.css" rel="stylesheet" />
+<script src="two-cols_page-down_files/paged-0.15/js/config.js"></script>
+<script src="two-cols_page-down_files/paged-0.15/js/paged.js"></script>
+<script src="two-cols_page-down_files/paged-0.15/js/hooks.js"></script>
+
+
+
+
+
+</head>
+
+<body>
+
+<div class="running-h1-title"></div>
+
+<div class="running-h2-title"></div>
+
+
+
+<div class="front-page">
+<div id="header" class="title-page">
+<h1 class="title">Pagedown</h1>
+</div>
+</div>
+
+<div class="front-matter-container">
+</div>
+
+<div class="main">
+<div class="from">
+<p>Charlie Joey Hadley<br />
+Bristol<br />
+United Kingdom<br />
+Email: <a href="mailto:charlie@rfortherestofus.com" class="email">charlie@rfortherestofus.com</a></p>
+</div>
+<div id="intro" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Intro</h1>
+<p>{pagedown}<span id="fn1" class="footnote" data-pagedown-footnote-number="1" style="white-space: pre-line;"><a href="https://github.com/rstudio/pagedown" class="uri">https://github.com/rstudio/pagedown</a></span> is designed to solve an annoying problem in RMarkdown</p>
+<blockquote>
+<p>Formatting PDF RMarkdown documents is difficult and requires LaTeX.</p>
+</blockquote>
+<p>The {pagedown} solution is to allow us to write HTML documents with pagination (and printing) as the primary goal. It’s really very good at it:</p>
+<ul>
+<li><p>pagedown::thesis_paged</p></li>
+<li><p>pagedown::jss_paged</p></li>
+<li><p>pagedown::html_resume</p></li>
+<li><p>pagedown::poster_relaxed</p></li>
+<li><p>pagedown::business_card</p></li>
+</ul>
+<p>The <strong>best</strong> choice for creating multiple columns in {pagedown} is flexbox because it’s browser width agnostic.</p>
+<p>As before, we can use either <code>&lt;div&gt;</code> tags or <code>:::</code></p>
+<div id="using" class="section level2 page-break-before" number="1.1">
+<h2><span class="header-section-number">1.1</span> Using :::</h2>
+<div style="display: flex;">
+<div>
+<p>This is the first column (on the left)</p>
+<p><img src="two-cols_page-down_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
+<div>
+<p>… and this is the second column (on the right)</p>
+<p><img src="two-cols_page-down_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+<div id="using-div" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Using <code>&lt;div&gt;</code></h2>
+<div style="display: flex;">
+<div>
+<p>This is the first column (on the left)</p>
+<p><img src="two-cols_page-down_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div>
+<p>… and this is the second column (on the right)</p>
+<p><img src="two-cols_page-down_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<script>
+// when the page is about to reload via servr, remember the scroll position
+document.addEventListener('servr:reload', function(e) {
+  sessionStorage.setItem('pagedown-scroll', window.scrollY);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+---
+title: "Pagedown"
+output:
+  pagedown::html_letter:
+    self_contained: false
+links-to-footnotes: true
+paged-footnotes: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+library(tidyverse)
+library(palmerpenguins)
+```
+
+::: from
+Charlie Joey Hadley  
+Bristol  
+United Kingdom  
+Email: charlie@rfortherestofus.com  
+:::
+
+# Intro
+
+[{pagedown}](https://github.com/rstudio/pagedown) is designed to solve an annoying problem in RMarkdown
+
+> Formatting PDF RMarkdown documents is difficult and requires LaTeX.
+
+The {pagedown} solution is to allow us to write HTML documents with pagination (and printing) as the primary goal. It's really very good at it:
+
+- pagedown::thesis_paged
+
+- pagedown::jss_paged
+
+- pagedown::html_resume
+
+- pagedown::poster_relaxed
+
+- pagedown::business_card
+
+The **best** choice for creating multiple columns in {pagedown} is flexbox because it's browser width agnostic.
+
+As before, we can use either `<div>` tags or `:::`
+
+## Using ::: {.page-break-before}
+
+:::: {style="display: flex;"}
+
+::: {}
+
+This is the first column (on the left)
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = species)) +
+  geom_point()
+```
+
+:::
+
+::: {}
+
+... and this is the second column (on the right)
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = island)) +
+  geom_point()
+```
+
+:::
+
+::::
+
+## Using `<div>`
+
+<div style="display: flex;">
+
+<div>
+
+This is the first column (on the left)
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = species)) +
+  geom_point()
+```
+
+</div>
+
+<div>
+
+... and this is the second column (on the right)
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = island)) +
+  geom_point()
+```
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
