@@ -1,0 +1,217 @@
+---
+title: "Two column ggplot2 charts"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+library(tidyverse)
+library(patchwork)
+library(cowplot)
+library(palmerpenguins)
+```
+
+```{r original_charts, include=FALSE}
+gg_penguin_scatter <- penguins %>% 
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = species)) +
+  geom_point()
+
+gg_penguin_bar_chart <- penguins %>% 
+  count(island, species) %>% 
+  ggplot(aes(x = n,
+             y = island,
+             fill = species)) +
+  geom_col()
+
+gg_penguins_timeline <- penguins %>% 
+  count(year, species) %>% 
+  ggplot(aes(x = year,
+             y = n,
+             color = species)) +
+  geom_line() +
+  scale_x_continuous(n.breaks = 3)
+```
+
+## Intro
+
+Often you'll want to arrange multiple {ggplot2} charts together with tags and titles, eg:
+
+```{r echo=FALSE}
+ptchw_chart <- ( ( gg_penguin_scatter | gg_penguin_bar_chart ) + plot_layout(tag_level = 'new') ) / gg_penguins_timeline + plot_layout(guides = 'collect') 
+
+gg_ptch_chart <- ptchw_chart &
+  guides(color = guide_none()) &
+  plot_annotation(tag_levels = c('1', 'a'), tag_sep = ".") &
+  plot_annotation(title = "Arranging ggplot2 charts") &
+  theme_minimal()
+
+ggsave("gg_ptch_chart.png",
+       gg_ptch_chart)
+
+gg_ptch_chart
+```
+
+## cowplot vs patchwork
+
+There are two different packages you can choose from, {cowplot} and {patchwork}. They are both very popular in the R community and it's almost down to personal choice which one you prefer. I've tried to differentiate them a little bit:
+
+## {cowplot}
+
+  - Charts are explicitly built within a grid using `plot_grid()`. The layout is controlled by specifying the number of rows and columns in the chart
+  
+  - Nested `plot_grid()` are required to get a single chart to span multiple rows or columns.
+  
+  - Themes need to be applied to individual charts.
+  
+  - Legends need to be extracted from charts and manually placed within a `plot_grid()`.
+  
+> {cowplot} allows extreme precision over your charts. Complex collections of charts with inset charts and custom looking legends can be created.
+  
+  
+## {patchwork}
+
+  - Charts are built using `(p1 + p2) / p3` syntax, `p3` will be placed under `p1` and `p2`.
+  
+  - Because there is no grid system `p3` will automatically span the entire width of the chart.
+  
+  - Themes can be applied to the entire patchwork chart.
+  
+  - Legends can be automatically collected.
+  
+> {patchwork} feels and behaves like a ggplot2 extension, a lot of things are automated. It can become painful to create extremely customised charts.
+
+## cowplot
+
+We need to create a nested plot_grid() for the timeline chart to span the width of the chart:
+
+
+```{r}
+plot_grid(plot_grid(gg_penguin_scatter, gg_penguin_bar_chart),
+          plot_grid(gg_penguins_timeline),
+          nrow = 2)
+```
+
+##
+
+In the chart below our goal is to collect together the legends and change the theme:
+
+- The legend is extracted from the bar chart with `get_legend()`
+
+- The legends for all charts are disabled with `theme(legend.position = "none")`
+
+- The legend is attached to the chart using another `plot_grid()`
+
+- The theme has to be changed for all individual charts.
+
+```{r}
+cwp_legend <- get_legend(gg_penguin_bar_chart)
+
+cwp_collected <-
+  plot_grid(
+    plot_grid(
+      gg_penguin_scatter + theme_minimal() + theme(legend.position = "none"),
+      gg_penguin_bar_chart + theme_minimal() + theme(legend.position = "none")
+    ),
+    plot_grid(gg_penguins_timeline + theme_minimal() + theme(legend.position = "none")),
+    nrow = 2
+  )
+
+plot_grid(
+  cwp_collected,
+  cwp_legend,
+  ncol = 2,
+  rel_widths = c(8, 1)
+)
+```
+
+##
+
+Automatic labelling only works within an individual `plot_grid()`. We therefore need to add manual labels into the chart:
+
+```{r}
+cwp_labelled <-
+  plot_grid(
+    plot_grid(
+      gg_penguin_scatter + theme_minimal() + theme(legend.position = "none"),
+      gg_penguin_bar_chart + theme_minimal() + theme(legend.position = "none"),
+      labels = c("1.a", "1.b")
+    ),
+    plot_grid(gg_penguins_timeline + theme_minimal() + theme(legend.position = "none"),
+              labels = "2"),
+    nrow = 2
+  )
+
+plot_grid(
+  cwp_labelled,
+  cwp_legend,
+  ncol = 2,
+  rel_widths = c(8, 1)
+)
+```
+
+
+## Patchwork
+
+Our basic layout is achieved as follows
+
+```{r}
+(gg_penguin_scatter + gg_penguin_bar_chart ) / gg_penguins_timeline
+```
+
+To change the theme of all subplots we use `&`
+
+```{r}
+ptwc_basic <- (gg_penguin_scatter + gg_penguin_bar_chart ) / gg_penguins_timeline
+
+ptwc_basic & theme_minimal()
+```
+
+##
+
+To collect together the legends we go through two steps:
+
+- Remove the guides for the `color` aesthetic, leaving only the fill guide.
+
+- Use `plot_layout(guides = "collect")` to collect the remaining guides together
+
+```{r}
+ptchw_collected <- ( gg_penguin_scatter | gg_penguin_bar_chart ) / gg_penguins_timeline + plot_layout(guides = "collect")
+
+ptchw_collected &
+  guides(color = guide_none()) &
+  theme_minimal()
+```
+
+##
+
+{patchwork} can do automatic tagging, the documentation shows the different systems of counting available.
+
+```{r}
+ptchw_auto_tagging <- ( gg_penguin_scatter | gg_penguin_bar_chart + plot_layout(tag_level = 'new') ) / gg_penguins_timeline + plot_layout(guides = "collect")
+
+ptchw_auto_tagging &
+  guides(color = guide_none()) &
+  plot_annotation(tag_levels = c('1', 'a'), tag_sep = ".") &
+  theme_minimal()
+```
+
+##
+
+Manual tagging
+
+```{r}
+ptchw_manual_tagging <- ( gg_penguin_scatter + labs(tag = "scatter") | gg_penguin_bar_chart + labs(tag = "bar") ) / gg_penguins_timeline + labs(tag = "line") + plot_layout(guides = "collect")
+
+
+ptchw_manual_tagging &
+  guides(color = guide_none()) &
+  theme_minimal()
+```
+
+
