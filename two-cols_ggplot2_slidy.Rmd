@@ -193,7 +193,7 @@ ptchw_collected &
 {patchwork} can do automatic tagging, the documentation shows the different systems of counting available.
 
 ```{r}
-ptchw_auto_tagging <- ( gg_penguin_scatter | gg_penguin_bar_chart + plot_layout(tag_level = 'new') ) / gg_penguins_timeline + plot_layout(guides = "collect")
+ptchw_auto_tagging <- ( ( gg_penguin_scatter | gg_penguin_bar_chart ) + plot_layout(tag_level = 'new') ) / gg_penguins_timeline + plot_layout(guides = "collect")
 
 ptchw_auto_tagging &
   guides(color = guide_none()) &
